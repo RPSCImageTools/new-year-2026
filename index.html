@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy New Year 2026</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: radial-gradient(circle, #1a0033, #000);
+    text-align: center;
+    color: #fff;
+    overflow: hidden;
+}
+
+.container {
+    padding: 20px;
+    margin-top: 18vh;
+    z-index: 2;
+    position: relative;
+}
+
+input {
+    padding: 12px;
+    width: 80%;
+    max-width: 300px;
+    border-radius: 25px;
+    border: none;
+    font-size: 16px;
+    text-align: center;
+}
+
+button {
+    margin-top: 15px;
+    padding: 12px 25px;
+    border-radius: 25px;
+    border: none;
+    font-size: 16px;
+    background: #00c853;
+    color: #fff;
+}
+
+h1 {
+    font-size: 30px;
+    margin-top: 20px;
+}
+
+h2 {
+    font-size: 20px;
+}
+
+.balloon {
+    position: absolute;
+    bottom: -100px;
+    width: 40px;
+    height: 60px;
+    border-radius: 50%;
+    animation: float 6s linear infinite;
+}
+
+@keyframes float {
+    from { transform: translateY(0); }
+    to { transform: translateY(-120vh); }
+}
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="fireworks"></canvas>
+
+<!-- New Year Music -->
+<audio id="nySound" autoplay loop>
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_55c69d1a60.mp3" type="audio/mpeg">
+</audio>
+
+<div class="container" id="inputBox">
+    <h2>🎉 Apna Naam Likhiye 🎉</h2>
+    <input type="text" id="nameInput" placeholder="Jaise: Avdes">
+    <br>
+    <button onclick="generateLink()">WhatsApp par Share Karein</button>
+</div>
+
+<div class="container" id="messageBox" style="display:none;">
+    <h2 id="senderMsg"></h2>
+    <h1>🎆 Happy New Year 2026 🎆</h1>
+</div>
+
+<script>
+// WhatsApp Share
+function generateLink() {
+    let name = document.getElementById("nameInput").value.trim();
+    if (!name) return alert("Naam likhna zaroori hai!");
+    let url = location.origin + location.pathname + "?name=" + encodeURIComponent(name);
+    let text = name + " ne aapke liye kuch bheja hai 🎉👇\n" + url;
+    window.location.href = "https://wa.me/?text=" + encodeURIComponent(text);
+}
+
+// Balloons
+function balloons() {
+    for (let i = 0; i < 12; i++) {
+        let b = document.createElement("div");
+        b.className = "balloon";
+        b.style.left = Math.random() * 100 + "vw";
+        b.style.background = `hsl(${Math.random()*360},100%,60%)`;
+        document.body.appendChild(b);
+        setTimeout(() => b.remove(), 6000);
+    }
+}
+
+// Fireworks
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+canvas.width = innerWidth;
+canvas.height = innerHeight;
+
+function firework() {
+    let x = Math.random() * canvas.width;
+    let y = Math.random() * canvas.height / 2;
+    for (let i = 0; i < 50; i++) {
+        let angle = Math.random() * 2 * Math.PI;
+        let speed = Math.random() * 5 + 2;
+        let px = x;
+        let py = y;
+        let life = 30;
+
+        let interval = setInterval(() => {
+            ctx.fillStyle = `hsl(${Math.random()*360},100%,60%)`;
+            ctx.fillRect(px, py, 3, 3);
+            px += Math.cos(angle) * speed;
+            py += Math.sin(angle) * speed;
+            life--;
+            if (life <= 0) clearInterval(interval);
+        }, 30);
+    }
+}
+
+setInterval(() => {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    firework();
+}, 800);
+
+// Read Name from URL
+let params = new URLSearchParams(location.search);
+if (params.has("name")) {
+    document.getElementById("inputBox").style.display = "none";
+    document.getElementById("messageBox").style.display = "block";
+    document.getElementById("senderMsg").innerText =
+        params.get("name") + " ne aapke liye kuch bheja hai 🎁";
+    balloons();
+    document.getElementById("nySound").play().catch(()=>{});
+}
+</script>
+
+</body>
+</html>
